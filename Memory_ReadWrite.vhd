@@ -1,9 +1,9 @@
+library std;
+use std.standard.all;
 library ieee;
-use ieee.numeric_std.all; 
-use ieee.std_logic_1164.all;
-use ieee.std_logic_arith.all;	 
-use ieee.std_logic_unsigned.all;
-
+use ieee.std_logic_1164.all; 
+library ieee;
+use ieee.numeric_std.all;
 library std;
 use std.standard.all;
 
@@ -11,7 +11,7 @@ entity Memory_ReadWrite is
 
 	port (address_in, data_in: in std_logic_vector(15 downto 0);
 			read_sig, write_sig, clock: in std_logic;
-			data_out: std_logic_vector(15 downto 0));
+			data_out: out std_logic_vector(15 downto 0));
 			
 end entity; 
 

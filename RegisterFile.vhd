@@ -1,8 +1,9 @@
+library std;
+use std.standard.all;
+library ieee;
+use ieee.std_logic_1164.all;
 library ieee;
 use ieee.numeric_std.all; 
-use ieee.std_logic_1164.all;
-use ieee.std_logic_arith.all;	 
-use ieee.std_logic_unsigned.all;
 
 library std;
 use std.standard.all;
@@ -44,7 +45,7 @@ begin
 							registers(7) <= pc;
 							
 						else
-							registers(to_integer(unsigned(A3))) <= D3;
+							registers(to_integer(unsigned(add3))) <= data3;
 							
 						end if;
 						
