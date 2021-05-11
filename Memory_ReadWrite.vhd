@@ -40,10 +40,7 @@ architecture mem of Memory_ReadWrite is
 		17 => x"91c0",
 		128 => x"ffff", 
 		129 => x"0002", 
-		130 => x"0000", 
-		131 => x"0000", 
 		132 => x"0001", 
-		133 => x"0000",
 		others => x"0000");
 		
 	begin 
@@ -52,20 +49,17 @@ architecture mem of Memory_ReadWrite is
 	  
 	  begin
 	  
-			if (read_sig = '1') then
-				 data_out <= Memory_Reg(to_integer(unsigned(address_in)));
+			if (read_sig = '0') then
+				data_out <= "1111111111111111";
 				 
-			elsif (read_sig = '0') then
-				 data_out <= "1111111111111111";
+				 
+			else
+				data_out <= Memory_Reg(to_integer(unsigned(address_in))); 
 				 
 			end if;
 
-			if (write_sig = '1') then
-			
-				if(falling_edge(clock)) then
-					Memory_Reg(to_integer(unsigned(address_in))) <= data_in;
-				end if;
-				
+			if (write_sig = '1' and falling_edge(clock)) then
+				Memory_Reg(to_integer(unsigned(address_in))) <= data_in;
 			end if;
 	  end process;
 	

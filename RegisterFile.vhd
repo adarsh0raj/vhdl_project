@@ -36,8 +36,9 @@ begin
 					
 						if ((not (add3 = "111")) and writ_pc = '1') then
 							
-							registers(7) <= pc;
 							registers(to_integer(unsigned(add3))) <= data3;
+							registers(7) <= pc;
+							
 							
 						elsif (add3 = "111" and writ_pc = '1') then
 							registers(7) <= pc;
