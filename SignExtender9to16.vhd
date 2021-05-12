@@ -17,14 +17,11 @@ if(optype='1') then
       ext(15 downto 7) <= inp;
 		ext(6 downto 0) <= "0000000";
 else
+
+		for x in 9 to 15 loop
+			ext(x) <= inp(8);
+		end loop;
       ext(8 downto 0) <= inp(8 downto 0); 
-		ext(15) <= inp(8);
-		ext(14) <= inp(8); 
-		ext(13) <= inp(8);
-		ext(12) <= inp(8); 
-		ext(11) <= inp(8);
-		ext(10) <= inp(8);
-		ext(9) <= inp(8);
 end if;
 end process;
 end architecture;

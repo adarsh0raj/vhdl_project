@@ -25,7 +25,7 @@ begin
 
 process (clock)
 begin 
-	if((clock'event and clock = '0')) then
+	if((falling_edge(clock))) then
 	
 		if (rst = '1') then
 			for i in 0 to 7 loop
@@ -33,23 +33,19 @@ begin
 			end loop;
 			
 		else
-             	if (writ = '1') then
-					
-						if ((not (add3 = "111")) and writ_pc = '1') then
-							
-							registers(to_integer(unsigned(add3))) <= data3;
-							registers(7) <= pc;
-							
-							
-						elsif (add3 = "111" and writ_pc = '1') then
-							registers(7) <= pc;
-							
-						else
-							registers(to_integer(unsigned(add3))) <= data3;
-							
-						end if;
-						
-		   	end if;
+		
+			if (writ = '1' and writ_pc = '1') then
+				
+				if ((not (add3 = "111")) ) then	
+					registers(to_integer(unsigned(add3))) <= data3;	
+				end if;
+				registers(7) <= pc;
+				
+			end if;
+			
+			if(writ = '1' and writ_pc = '0') then
+				registers(to_integer(unsigned(add3))) <= data3;	
+			end if;
 				
 		end if;
 		

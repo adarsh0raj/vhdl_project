@@ -11,14 +11,11 @@ architecture extend6 of SignExtender6to16 is
 
 begin
       ext(5 downto 0) <= inp(5 downto 0); 
-		ext(15) <= inp(5);
-		ext(14) <= inp(5); 
-		ext(13) <= inp(5);
-		ext(12) <= inp(5); 
-		ext(11) <= inp(5);
-		ext(10) <= inp(5);
-		ext(9) <= inp(5);
-		ext(8) <= inp(5);
-		ext(7) <= inp(5);
-		ext(6) <= inp(5);
-end extend6;
+		process is 
+		begin
+		for x in 6 to 15 loop
+			ext(x) <= inp(5);
+		end loop;
+		end process;
+
+end architecture;

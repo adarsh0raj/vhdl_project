@@ -19,29 +19,7 @@ architecture mem of Memory_ReadWrite is
 
 	type regArr is array(65535 downto 0) of std_logic_vector(15 downto 0);
 	
-	signal Memory_Reg: regArr:=(
-		0 => x"3001", 
-		1 => x"60aa", 
-		2 => x"0038", 
-		3 => x"03fa", 
-		4 => x"0079", 
-		5 => x"5f9f", 
-		6 => x"13fb", 
-		7 => x"2038",
-		8 => x"233a", 
-		9 => x"2079", 
-		10 => x"4f86",
-		11 => x"4f9f", 
-		12 => x"c9c2", 
-		13 => x"abcd", 
-		14 => x"8e02", 
-		15 => x"1234", 
-		16 => x"7caa", 
-		17 => x"91c0",
-		128 => x"ffff", 
-		129 => x"0002", 
-		132 => x"0001", 
-		others => x"0000");
+	signal Memory_Reg: regArr;
 		
 	begin 
 	
@@ -49,18 +27,19 @@ architecture mem of Memory_ReadWrite is
 	  
 	  begin
 	  
+			if (write_sig = '1' and falling_edge(clock)) then
+				Memory_Reg(to_integer(unsigned(address_in))) <= data_in;
+			end if;
+			
 			if (read_sig = '0') then
 				data_out <= "1111111111111111";
-				 
-				 
+				 	 
 			else
 				data_out <= Memory_Reg(to_integer(unsigned(address_in))); 
 				 
 			end if;
 
-			if (write_sig = '1' and falling_edge(clock)) then
-				Memory_Reg(to_integer(unsigned(address_in))) <= data_in;
-			end if;
+			
 	  end process;
 	
 end mem;

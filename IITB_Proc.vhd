@@ -94,6 +94,16 @@ process(clk, currstate)
 			nxtaddr := "0000000000000000";
 			
 			nxtstate := S0;
+		
+		when Sx =>
+			memwrite <= '0';
+			rfilerst <= '0';
+			memread <= '0';
+			a_alu <= address;
+			b_alu <= "0000000000000001";
+			alutype <= '0';
+			nxtaddr := res_alu;
+			nxtstate := S0;
 			
 		when S0 =>
 			rfilerst <= '0';
@@ -109,37 +119,29 @@ process(clk, currstate)
 			   when "0000" =>
 				  nxtstate := S1;
 				when "0001" =>
-				  nxtstate := S4;
+				  nxtstate := S2;
 				when "0010" =>
 				  nxtstate := S1;
 				when "0011" =>
-				  nxtstate := S6;
+				  nxtstate := S3;
 				when "0100" =>
-				  nxtstate := S8;
+				  nxtstate := S5;
 				when "0101" =>
-				  nxtstate := S8;
+				  nxtstate := S5;
 				when "0110" =>
-				  nxtstate := S11;
+				  nxtstate := S10;
 				when "1001" =>
-				  nxtstate := S17;
+				  nxtstate := S9;
 				when "1100" =>
 				  nxtstate := S1;
 				when "1000" =>
-				  nxtstate := S17;
+				  nxtstate := S9;
 				when "0111" =>
-				  nxtstate := S11;
+				  nxtstate := S10;
 			   when others => null;
 			end case;
 			
-		when Sx =>
-			memwrite <= '0';
-			rfilerst <= '0';
-			memread <= '0';
-			a_alu <= address;
-			b_alu <= "0000000000000001";
-			alutype <= '0';
-			nxtaddr := res_alu;
-			nxtstate := S0;
+		
 		
 		when S1 =>
 			rfilerst <= '0';
@@ -151,9 +153,28 @@ process(clk, currstate)
 			rAdd2 <= instr(8 downto 6);
 			x1 := rData1;
 			x2 := rData2;
-			nxtstate := S2;
+			nxtstate := S4;
+		
+		when S2 => 
+			memwrite <= '0';
+			memread <= '0';
+			rfwrite <= '0';
+			rAdd1 <= instr(11 downto 9);
+			x1 := rData1;
+			ext6in <= instr(5 downto 0);
+			x2 := ext6out;
+			nxtstate := S4;
+		
+		when S3 =>
+			memwrite <= '0';
+			memread <= '0';
+			rfwrite <= '0';
+			ext9in <= instr(8 downto 0);
+			ext9type <= '1';
+			x1 := ext9out;
+			nxtstate := S7;
 			
-		when S2 =>
+		when S4 =>
 			rfilerst <= '0';
 			memread <= '0';
 			memwrite <= '0';
@@ -168,25 +189,35 @@ process(clk, currstate)
 			
 			case (opr) is
 				when "0000" =>
-					nxtstate :=S3;
+					nxtstate :=S6;
 				when "0001" =>
-					nxtstate :=S5;
+					nxtstate :=S8;
 				when "0010" =>
-					nxtstate :=S3;
+					nxtstate :=S6;
 				when "0100" =>
-					nxtstate :=S9;
+					nxtstate :=S17;
 				when "0101" =>
-					nxtstate :=S10;
+					nxtstate :=S11;
 				when "1100" =>
 					if(x1=x2) then
-						nxtstate :=S20;
+						nxtstate :=S7;
 					else
 						nxtstate :=Sx;
 					end if;
 				when others => null;
 			end case;
 		
-		when S3 =>
+		when S5 => 
+			memwrite <= '0';
+			memread <= '0';
+			rfwrite <= '0';
+			rAdd1 <= instr(8 downto 6);
+			ext6in <= instr(5 downto 0);
+			x1 := rData1;
+			x2 := ext6out;
+			nxtstate := S4;
+		
+		when S6 =>
 			rfilerst <= '0';
 			memread <= '0';
 			memwrite <= '0';
@@ -203,17 +234,16 @@ process(clk, currstate)
 			end if;
 			nxtstate := Sx;
 			
-		when S4 => 
-			memwrite <= '0';
-			memread <= '0';
-			rfwrite <= '0';
-			rAdd1 <= instr(11 downto 9);
-			x1 := rData1;
+		when S7 =>
+			a_alu <= address;
 			ext6in <= instr(5 downto 0);
-			x2 := ext6out;
-			nxtstate := S2;
+			b_alu <= ext6out;
+			alutype <= '0';
+			nxtaddr := res_alu;
+			nxtstate := S0;
 			
-		when S5 =>
+			
+		when S8 =>
 			memwrite <= '0';
 			memread <= '0';
 			rfwrite <= '1';
@@ -227,34 +257,101 @@ process(clk, currstate)
 			rAdd3 <= instr(8 downto 6);
 			nxtstate := Sx;
 		
-		when S6 =>
-			memwrite <= '0';
-			memread <= '0';
-			rfwrite <= '0';
-			ext9in <= instr(8 downto 0);
-			ext9type <= '1';
-			x1 := ext9out;
-			nxtstate := S7;
+		
 			
-		when S7 =>
+		when S9 =>
 			memwrite <= '0';
 			memread <= '0';
 			rfwrite <= '1';
-			rData3 <= x1; 
+			rData3 <= address;
 			rAdd3 <= instr(11 downto 9);
-			nxtstate := Sx;
+			if(opr = "1001") then
+				nxtstate := S18;
+			else
+				nxtstate := S19;
+			end if;
 			
-		when S8 => 
+		
+		when S10 =>
 			memwrite <= '0';
 			memread <= '0';
 			rfwrite <= '0';
-			rAdd1 <= instr(8 downto 6);
-			ext6in <= instr(5 downto 0);
+			rAdd1 <= instr(11 downto 9);
 			x1 := rData1;
-			x2 := ext6out;
-			nxtstate := S2;
+			if(opr = "0111") then
+				nxtstate := S16;
+			else 
+				nxtstate := S12;
+			end if;	
+		
 			
-		when S9 =>
+		when S11 =>
+			memwrite <= '1';
+			memread <= '0';
+			rfwrite <= '0';
+			rAdd1 <= instr(11 downto 9);
+			x2 := rData1;
+			mem_add <= x3;
+			mdatain <= x2;
+			nxtstate := Sx;
+			
+		
+		when S12 =>
+			memwrite <= '0';
+			memread <= '1';
+			rfwrite <= '0';
+			mem_add <= x1;
+			x3 := mdataout;
+			nxtstate := S14;
+		
+		when S13 =>
+			a_alu <= x1;
+			b_alu <= "0000000000000001";
+			alutype <= '1';
+			x1 := res_alu;
+			if(unsigned(x2)<8) then
+				if(opr = "0111") then
+					nxtstate := S16;
+				else 
+					nxtstate := S12;
+				end if;
+			else
+				nxtstate := Sx;
+			end if;
+		
+		when S14 =>
+			rfwrite <= '1';
+			rData3 <= x3;
+			rAdd3 <= x2(2 downto 0);
+			a_alu <= x2;
+			b_alu <= "0000000000000001";
+			alutype <= '0';
+			x2 := res_alu;
+			nxtstate := S13;
+			
+
+		when S15 =>
+			a_alu <= x2;
+			b_alu <= "0000000000000001";
+			alutype <= '0';
+			x2 := res_alu;
+			nxtstate := S13;
+		
+		
+		when S16 =>
+			memwrite <= '1';
+			memread <= '0';
+			rfwrite <= '0';
+			rAdd2 <= x2(2 downto 0);
+			x3 := rData2;
+			mem_add <= x1;
+			mdatain <= x3;
+			
+			nxtstate := S15;
+			
+
+			
+		when S17 =>
 			memread <= '1';
 			rfwrite <= '1';
 			if(opr = "0000" or opr = "0001") then
@@ -268,91 +365,6 @@ process(clk, currstate)
 			rData3 <= x1;
 			rAdd3 <= instr(11 downto 9);
 			nxtstate := Sx;
-			
-		when S10 =>
-			memwrite <= '1';
-			memread <= '0';
-			rfwrite <= '0';
-			rAdd1 <= instr(11 downto 9);
-			x2 := rData1;
-			mem_add <= x3;
-			mdatain <= x2;
-			nxtstate := Sx;
-			
-		when S11 =>
-			memwrite <= '0';
-			memread <= '0';
-			rfwrite <= '0';
-			rAdd1 <= instr(11 downto 9);
-			x1 := rData1;
-			if(opr = "0111") then
-				nxtstate := S15;
-			else 
-				nxtstate := S12;
-			end if;
-		
-		when S12 =>
-			memwrite <= '0';
-			memread <= '1';
-			rfwrite <= '0';
-			mem_add <= x1;
-			x3 := mdataout;
-			nxtstate := S13;
-			
-		when S13 =>
-			rfwrite <= '1';
-			rData3 <= x3;
-			rAdd3 <= x2(2 downto 0);
-			a_alu <= x2;
-			b_alu <= "0000000000000001";
-			alutype <= '0';
-			x2 := res_alu;
-			nxtstate := S14;
-			
-		when S14 =>
-			a_alu <= x1;
-			b_alu <= "0000000000000001";
-			alutype <= '1';
-			x1 := res_alu;
-			if(unsigned(x2)<8) then
-				if(opr = "0111") then
-					nxtstate := S15;
-				else 
-					nxtstate := S12;
-				end if;
-			else
-				nxtstate := Sx;
-			end if;
-		
-		when S15 =>
-			memwrite <= '1';
-			memread <= '0';
-			rfwrite <= '0';
-			rAdd2 <= x2(2 downto 0);
-			x3 := rData2;
-			mem_add <= x1;
-			mdatain <= x3;
-			
-			nxtstate := S16;
-			
-		when S16 =>
-			a_alu <= x2;
-			b_alu <= "0000000000000001";
-			alutype <= '0';
-			x2 := res_alu;
-			nxtstate := S14;
-			
-		when S17 =>
-			memwrite <= '0';
-			memread <= '0';
-			rfwrite <= '1';
-			rData3 <= address;
-			rAdd3 <= instr(11 downto 9);
-			if(opr = "1001") then
-				nxtstate := S18;
-			else
-				nxtstate := S19;
-			end if;
 		
 		when S18 =>
 			memwrite <= '0';
@@ -375,12 +387,12 @@ process(clk, currstate)
 			nxtstate := S0;
 			
 		when S20 =>
-			a_alu <= address;
-			ext6in <= instr(5 downto 0);
-			b_alu <= ext6out;
-			alutype <= '0';
-			nxtaddr := res_alu;
-			nxtstate := S0;
+			memwrite <= '0';
+			memread <= '0';
+			rfwrite <= '1';
+			rData3 <= x1; 
+			rAdd3 <= instr(11 downto 9);
+			nxtstate := Sx;
 		
 		when others => null;
 	
