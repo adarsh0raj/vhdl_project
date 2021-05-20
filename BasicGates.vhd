@@ -1,3 +1,4 @@
+-- Sub entities Basic Gates
 -- defining all gates in 1 file for better reusability 
 
 --AND GATE

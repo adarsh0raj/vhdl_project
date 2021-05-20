@@ -1,3 +1,4 @@
+-- Sub entity One Bit Half Adder
 -- importing libraries
 library work;
 use work.all;
@@ -26,7 +27,7 @@ architecture halfadd of OnebitHalfAdd is
 	end component;
 
 begin 
-	-- instantiating required mux and connecting them
+	-- instantiating required mux and connecting them for half adder
 	mux1 : TwoByOneMux
 		port map (i(1) => '0', i(0) => '1', sel => b, z => a1);
 	

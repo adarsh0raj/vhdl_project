@@ -1,3 +1,4 @@
+-- Sub entity One Bit Full Adder
 --importing required libraries
 library work;
 use work.all;

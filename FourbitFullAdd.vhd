@@ -1,3 +1,4 @@
+-- Sub Entity Four Bit Full Adder
 -- importing required libraries
 
 library work;

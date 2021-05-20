@@ -1,3 +1,5 @@
+-- Sub entity 2-1 Multiplexer
+
 library work;
 use work.all;
 

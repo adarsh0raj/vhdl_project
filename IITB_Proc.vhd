@@ -1,3 +1,6 @@
+-- Main entity IITB Processor
+-- loading libraries
+
 library std;
 use std.standard.all;
 library ieee;
@@ -5,6 +8,7 @@ use ieee.std_logic_1164.all;
 library ieee;
 use ieee.numeric_std.all; 
 
+-- entity declaration
 entity IITB_Proc is
   port (
     clk,rst     : in  std_logic;
@@ -13,6 +17,7 @@ end entity;
 
 architecture main of IITB_Proc is
 
+-- alu component
 component ALU is
 	port( A,B : in std_logic_vector(15 downto 0);
 		optype : in std_logic ;
@@ -20,6 +25,7 @@ component ALU is
 		outc, outz: out std_logic);
 end component;
 
+-- register file component
 component registerfile is
 	port( add1, add2, add3 : in std_logic_vector(2 downto 0);
 			data3, pc: in std_logic_vector(15 downto 0);
@@ -27,12 +33,14 @@ component registerfile is
 			data1, data2: out std_logic_vector(15 downto 0));
 end component;
 
+-- memory component
 component memory_readwrite is
 	port (address_in, data_in: in std_logic_vector(15 downto 0);
 			read_sig, write_sig, clock: in std_logic;
 			data_out: out std_logic_vector(15 downto 0));
 end component;
 
+-- sign extenders
 component SignExtender6to16 is
 	port (inp: in std_logic_vector(5 downto 0);
 		ext: out std_logic_vector(15 downto 0));
@@ -44,8 +52,11 @@ component SignExtender9to16 is
 		ext: out std_logic_vector(15 downto 0));
 end component;
 
+-- state variable
 type State is (Sinit, Sx, S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21);
 signal currstate: State;
+
+-- signals for all other inputs and outputs for components
 signal optype: std_logic_vector(3 downto 0);
 signal rAdd1, rAdd2, rAdd3: std_logic_vector(2 downto 0);
 signal address, mem_add, mdatain, mdataout: std_logic_vector(15 downto 0);
@@ -61,7 +72,9 @@ signal carrymain, zeromain : std_logic;
 signal alutype, ext9type: std_logic;
 
 
-begin
+begin                  -- architecture begin
+
+-- components port map
 ALU0 : ALU
 	port map(a_alu, b_alu, alutype, res_alu, carryout, zeroout);
 regfile : registerfile
@@ -70,20 +83,22 @@ Memory0: memory_readwrite
 	port map(mem_add, mdatain, memread,  memwrite, clk, mdataout);
 
 	
-process(clk, currstate)
+process(clk, currstate)                    -- process on clock and state
+	
+	-- state variables
 	variable nxtstate : State;
 	variable z, c : std_logic;
 	variable opr : std_logic_vector(3 downto 0);
 	variable x1, x2, x3, instr, nxtaddr : std_logic_vector(15 downto 0);
 	
-	begin
+	begin                       -- intial assignments of state variables
 		nxtstate := currstate;
 		c:=carrymain; z:= zeromain;
 		x1 := t1; x2 := t2; x3:=t3;
 		opr := optype;
 		nxtaddr := address;
 	
-	case currstate is
+	case currstate is                         -- cases on all states
 		when Sinit =>
 			rfilerst <= '1';
 			memread <= '0';
@@ -391,9 +406,9 @@ process(clk, currstate)
 		
 		when others => null;
 	
-	end case;
+	end case;                           -- cases on state end
 	
-	if(falling_edge(clk)) then
+	if(falling_edge(clk)) then                 -- if falling edge and reset-> 0, update state
 		if(rst = '0') then
 			t1 <= x1; t2 <= x2; t3 <= x3;
 			carrymain <= c; zeromain <= z;
@@ -401,9 +416,9 @@ process(clk, currstate)
 			optype <= opr;
 			address <= nxtaddr;
 			currstate <= nxtstate;
-		else
-			currstate <= Sinit;
+		else 
+			currstate <= Sinit;                    -- if reset is 1, then go to initial state
 		end if;
 	end if;
-	end process;
+	end process;                               -- end process
 end architecture;

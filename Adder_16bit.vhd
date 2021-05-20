@@ -1,8 +1,10 @@
+-- Sub entity 16 bit Adder
 library std;
 use std.standard.all;
 library ieee;
 use ieee.std_logic_1164.all;
 
+-- Entity Declaration
 entity Adder_16bit is
 port (A, B : in std_logic_vector(15 downto 0);
 		cin : in std_logic;
@@ -12,6 +14,8 @@ end entity;
 
 Architecture addition of Adder_16bit is
 signal c1, c2, c3 : std_logic;
+
+-- component Four Bit Full Adder
 component FourbitFullAdd is
 	port( a,b : in std_logic_vector(3 downto 0);
 			cin : in std_logic;
@@ -20,6 +24,7 @@ component FourbitFullAdd is
 end component;
 
 begin
+   -- Initialising full adders and mapping inputs and outputs
 	add00 : FourbitFullAdd
 				port map(A(3 downto 0), B(3 downto 0), cin, sum(3 downto 0), c1);
 	add01 : FourbitFullAdd
