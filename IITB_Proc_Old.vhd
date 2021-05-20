@@ -5,13 +5,13 @@ use ieee.std_logic_1164.all;
 library ieee;
 use ieee.numeric_std.all; 
 
-entity IITB_Proc is
+entity IITB_Proc_Old is
   port (
     clk,rst     : in  std_logic;
 	 output : out std_logic_vector(3 downto 0));
 end entity;
 
-architecture main of IITB_Proc is
+architecture main of IITB_Proc_Old is
 
 component ALU is
 	port( A,B : in std_logic_vector(15 downto 0);
@@ -116,7 +116,7 @@ process(clk, currstate)
 			opr := instr(15 downto 12);
 			
 			case (opr) is
-			   	when "0000" =>
+			   when "0000" =>
 				  nxtstate := S1;
 				when "0001" =>
 				  nxtstate := S2;
@@ -172,7 +172,7 @@ process(clk, currstate)
 			ext9in <= instr(8 downto 0);
 			ext9type <= '1';
 			x1 := ext9out;
-			nxtstate := S20;
+			nxtstate := S7;
 			
 		when S4 =>
 			rfilerst <= '0';
@@ -180,7 +180,7 @@ process(clk, currstate)
 			memwrite <= '0';
 			rfwrite <= '0';
 			a_alu <= x1; b_alu <= x2;
-			if(opr = "0000" or opr = "0001") then
+			if(opr = "0000") then
 				alutype <= '0';
 			else
 				alutype <= '1';
@@ -222,14 +222,15 @@ process(clk, currstate)
 			memread <= '0';
 			memwrite <= '0';
 			rfwrite <= '1';
-			if(instr(1 downto 0) = "00" or (instr(1 downto 0) = "10" and c = '1') or (instr(1 downto 0) = "01" and z = '1')) then 
+			if(instr(1 downto 0)="00" or (instr(1 downto 0)="01" and z='1') or (instr(1 downto 0)="10" and c='1')) then 
 				rData3 <= x3;
 				rAdd3 <= instr(5 downto 3);
-				if(opr = "0000") then
+				if(opr = "0000" or opr = "0001") then
 					c:= carryout;
 				end if;
-				
-				z := zeroout;
+				if(opr = "0000" or opr = "0001" or opr = "0010" or opr = "0100") then
+					z := zeroout;
+				end if;
 			end if;
 			nxtstate := Sx;
 			
@@ -246,10 +247,12 @@ process(clk, currstate)
 			memwrite <= '0';
 			memread <= '0';
 			rfwrite <= '1';
-			
-			c := carryout;
-			z := zeroout;
-
+			if(opr = "0000" or opr = "0001") then
+				c:= carryout;
+			end if;
+			if(opr = "0000" or opr = "0001" or opr = "0010" or opr = "0100") then
+				z := zeroout;
+			end if;
 			rData3 <= x3;
 			rAdd3 <= instr(8 downto 6);
 			nxtstate := Sx;
@@ -351,10 +354,12 @@ process(clk, currstate)
 		when S17 =>
 			memread <= '1';
 			rfwrite <= '1';
-			
-			c := carryout;
-			z := zeroout;
-			
+			if(opr = "0000" or opr = "0001") then
+				c:= carryout;
+			end if;
+			if(opr = "0000" or opr = "0001" or opr = "0010" or opr = "0100") then
+				z := zeroout;
+			end if;
 			mem_add <= x3;
 			x1 := mdataout;
 			rData3 <= x1;
@@ -407,3 +412,8 @@ process(clk, currstate)
 	end if;
 	end process;
 end architecture;
+		
+				
+
+				
+			

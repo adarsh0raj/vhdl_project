@@ -4,7 +4,7 @@ use ieee.std_logic_textio.all;
 use std.textio.all;
 use IEEE.numeric_std.all;
 
-entity IITB_Proc is
+entity Testbench is
 end entity;
 
 architecture arc of Testbench is
@@ -28,18 +28,18 @@ begin
 	
 		clock <= '1';
 		reset <= '1';
-		wait for 2.5 sec;
+		wait for 10 ns;
 		clock <= '0';
-		wait for 2.5 sec;
+		wait for 10 ns;
 	
 		for i in 0 to 50 loop
 			
 			reset <= '0';
 			clock <= '1';
-			wait for 2.5 sec;
+			wait for 10 ns;
 				
 			clock <= '0';
-			wait for 2.5 sec;
+			wait for 10 ns;
 				
 		end loop;
 		
