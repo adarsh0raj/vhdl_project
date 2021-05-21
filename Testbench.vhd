@@ -43,15 +43,17 @@ begin
 			instr <= '1';
 			
 			--instruction <= instruction ka code add karo
-			if(i=1) then
-				instruction <= "0000000000000001";
-			else 
-				if(i=3) then
-					instruction <= "0100000000000001";
-				else
-					instruction <= "0000000000000000";
-				end if;
-			end if;
+--			if(i=1) then
+--				instruction <= "0000000000000001";
+--			else 
+--				if(i=3) then
+--					instruction <= "0100000000000001";
+--				else
+--					instruction <= "0000000000000000";
+--				end if;
+--			end if;
+
+			instruction <= "0000000000001000";  --1 + 1 = 2 stored in R1
 			
 			wait for 10 ns;
 			
@@ -78,7 +80,7 @@ begin
 		wait for 10 ns;		
 			
 	
-		for i in 0 to 50 loop
+		for i in 0 to 20 loop
 			
 			reset <= '0';
 			clock <= '1';
