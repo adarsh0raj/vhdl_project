@@ -31,6 +31,7 @@ begin
 
 process (clock)                            -- process on clock
 begin 
+	
 	if((falling_edge(clock))) then
 	
 		if (rst = '1') then                      -- reset -> all value set to zero

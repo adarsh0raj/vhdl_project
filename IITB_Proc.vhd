@@ -11,7 +11,8 @@ use ieee.numeric_std.all;
 -- entity declaration
 entity IITB_Proc is
   port (
-    clk,rst     : in  std_logic;
+    clk,rst, inst_flag : in std_logic;
+    instruc : in std_logic_vector(15 downto 0);
 	 output : out std_logic_vector(3 downto 0));
 end entity;
 
@@ -53,7 +54,7 @@ component SignExtender9to16 is
 end component;
 
 -- state variable
-type State is (Sinit, Sx, S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21);
+type State is (Sinit, Sinstr, Sx, S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21);
 signal currstate: State;
 
 -- signals for all other inputs and outputs for components
@@ -92,6 +93,7 @@ process(clk, currstate)                    -- process on clock and state
 	variable x1, x2, x3, instr, nxtaddr : std_logic_vector(15 downto 0);
 	
 	begin                       -- intial assignments of state variables
+			
 		nxtstate := currstate;
 		c:=carrymain; z:= zeromain;
 		x1 := t1; x2 := t2; x3:=t3;
@@ -109,6 +111,15 @@ process(clk, currstate)                    -- process on clock and state
 			nxtaddr := "0000000000000000";
 			
 			nxtstate := S0;
+			
+		when Sinstr =>     --write instruction into memory
+			memwrite <= '1';
+			rfilerst <= '0';
+			memread <= '0';	
+			mem_add <= address;
+			mdatain <= instruc;   --writing instruction
+			
+			nxtstate := Sx;   --to increment the address for inserting the instruction		
 		
 		when Sx =>
 			memwrite <= '0';
@@ -410,12 +421,18 @@ process(clk, currstate)                    -- process on clock and state
 	
 	if(falling_edge(clk)) then                 -- if falling edge and reset-> 0, update state
 		if(rst = '0') then
+			
 			t1 <= x1; t2 <= x2; t3 <= x3;
 			carrymain <= c; zeromain <= z;
 			instruction <= instr;
 			optype <= opr;
 			address <= nxtaddr;
 			currstate <= nxtstate;
+			
+			if(inst_flag = '1') then --go to Sinstr if instruction is being given
+				currstate <= Sinstr;
+			end if;
+			
 		else 
 			currstate <= Sinit;                    -- if reset is 1, then go to initial state
 		end if;
