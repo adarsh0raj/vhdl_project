@@ -206,7 +206,7 @@ process(clk, currstate)                    -- process on clock and state
 			memwrite <= '0';
 			rfwrite <= '0';
 			a_alu <= x1; b_alu <= x2;
-			if(opr = "0000" or opr = "0001") then
+			if(opr = "0000" or opr = "0001" or opr = "0100") then
 				alutype <= '0';
 			else
 				alutype <= '1';

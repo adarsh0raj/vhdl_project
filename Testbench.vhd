@@ -43,7 +43,15 @@ begin
 			instr <= '1';
 			
 			--instruction <= instruction ka code add karo
-			instruction <= "0000000000000000";
+			if(i=1) then
+				instruction <= "0000000000000001";
+			else 
+				if(i=3) then
+					instruction <= "0100000000000001";
+				else
+					instruction <= "0000000000000000";
+				end if;
+			end if;
 			
 			wait for 10 ns;
 			
