@@ -78,10 +78,18 @@ begin                  -- architecture begin
 -- components port map
 ALU0 : ALU
 	port map(a_alu, b_alu, alutype, res_alu, carryout, zeroout);
+	
 regfile : registerfile
 	port map(rAdd1, rAdd2, rAdd3, rData3, rDataPC, clk, rfwrite, rPCwrite, rfilerst, rData1, rData2);
+	
 Memory0: memory_readwrite
 	port map(mem_add, mdatain, memread,  memwrite, clk, mdataout);
+	
+Sign6: SignExtender6to16
+	port map(ext6in, ext6out);
+
+Sign9: SignExtender9to16
+	port map(ext9in, ext9type, ext9out);
 
 	
 process(clk, currstate)                    -- process on clock and state
@@ -142,7 +150,7 @@ process(clk, currstate)                    -- process on clock and state
 			opr := instr(15 downto 12);
 			
 			case (opr) is
-			   	when "0000" =>
+			   when "0000" =>
 				  nxtstate := S1;
 				when "0001" =>
 				  nxtstate := S2;

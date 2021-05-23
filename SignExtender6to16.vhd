@@ -13,8 +13,8 @@ end entity;
 architecture extend6 of SignExtender6to16 is
 
 begin
-      ext(5 downto 0) <= inp(5 downto 0);         -- Copying 5 LSBs
-		process is 
+      ext(5 downto 0) <= inp(5 downto 0);         -- Copying 6 LSBs
+		process(inp)
 		begin
 		for x in 6 to 15 loop               -- MSBs of output same as MSB of input using for loop
 			ext(x) <= inp(5);
