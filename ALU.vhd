@@ -18,7 +18,7 @@ end entity;
 architecture arch of ALU is
 	-- signals for port mapping
 	signal resA, resN: std_logic_vector(15 downto 0);
-	signal carryA, carryN : std_logic;
+	signal carryA : std_logic;
 	
 	-- components for ALU
 	component Adder_16bit is
@@ -38,7 +38,7 @@ begin
 	type0: Adder_16bit port map (A, B, '0', resA, carryA);
 	type1: Nand_16bit port map (A, B, resN);
 	 
-	process(optype, resA, resN, carryA, carryN)           -- process on input and output
+	process(optype, resA, resN, carryA)           -- process on input and output
 	begin
 		
 		if(optype = '0') then                                -- output type "0" - add operation
@@ -51,7 +51,7 @@ begin
 			end if;
 		else                                                -- output type "1" - nand operation
 			result <= resN;  
-			outc <= carryN;                                    -- carry flag update
+			outc <= '0';                                    -- carry flag update
 			if (resN = "0000000000000000") then                -- zero flag update
 				outz <= '1'; 
 			else

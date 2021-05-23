@@ -68,7 +68,8 @@ signal rData1, rData2, rData3, rDataPC : std_logic_vector(15 downto 0);
 signal ext6in : std_logic_vector(5 downto 0);
 signal ext9in : std_logic_vector(8 downto 0);
 signal ext6out, ext9out : std_logic_vector(15 downto 0);
-signal memread, memwrite, rPCwrite, rfilerst, rfwrite : std_logic;
+signal memread, memwrite, rfilerst, rfwrite : std_logic;
+signal rPCwrite: std_logic:='0'; 
 signal carrymain, zeromain : std_logic;
 signal alutype, ext9type: std_logic;
 
@@ -92,7 +93,7 @@ Sign9: SignExtender9to16
 	port map(ext9in, ext9type, ext9out);
 
 	
-process(clk, currstate)                    -- process on clock and state
+process(clk, rst, inst_flag, instruc, currstate)                    -- process on clock and state
 	
 	-- state variables
 	variable nxtstate : State;
@@ -419,8 +420,8 @@ process(clk, currstate)                    -- process on clock and state
 			memwrite <= '0';
 			memread <= '0';
 			rfwrite <= '1';
-			rData3 <= x1; 
 			rAdd3 <= instr(11 downto 9);
+			rData3 <= x1; 
 			nxtstate := Sx;
 		
 		when others => null;
