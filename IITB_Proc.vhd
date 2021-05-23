@@ -12,8 +12,7 @@ use ieee.numeric_std.all;
 entity IITB_Proc is
   port (
     clk,rst, inst_flag : in std_logic;
-    instruc : in std_logic_vector(15 downto 0);
-	 output : out std_logic_vector(3 downto 0));
+    instruc : in std_logic_vector(15 downto 0));
 end entity;
 
 architecture main of IITB_Proc is
@@ -69,7 +68,6 @@ signal ext6in : std_logic_vector(5 downto 0);
 signal ext9in : std_logic_vector(8 downto 0);
 signal ext6out, ext9out : std_logic_vector(15 downto 0);
 signal memread, memwrite, rfilerst, rfwrite : std_logic;
-signal rPCwrite: std_logic:='0'; 
 signal carrymain, zeromain : std_logic;
 signal alutype, ext9type: std_logic;
 
@@ -79,21 +77,17 @@ begin                  -- architecture begin
 -- components port map
 ALU0 : ALU
 	port map(a_alu, b_alu, alutype, res_alu, carryout, zeroout);
-	
 regfile : registerfile
-	port map(rAdd1, rAdd2, rAdd3, rData3, rDataPC, clk, rfwrite, rPCwrite, rfilerst, rData1, rData2);
-	
+	port map(rAdd1, rAdd2, rAdd3, rData3, rDataPC, clk, rfwrite, '0', rfilerst, rData1, rData2);
 Memory0: memory_readwrite
 	port map(mem_add, mdatain, memread,  memwrite, clk, mdataout);
-	
 Sign6: SignExtender6to16
 	port map(ext6in, ext6out);
-
 Sign9: SignExtender9to16
 	port map(ext9in, ext9type, ext9out);
 
 	
-process(clk, rst, inst_flag, instruc, currstate)                    -- process on clock and state
+process(clk, currstate)                    -- process on clock and state
 	
 	-- state variables
 	variable nxtstate : State;
@@ -151,7 +145,7 @@ process(clk, rst, inst_flag, instruc, currstate)                    -- process o
 			opr := instr(15 downto 12);
 			
 			case (opr) is
-			   when "0000" =>
+			   	when "0000" =>
 				  nxtstate := S1;
 				when "0001" =>
 				  nxtstate := S2;
@@ -420,8 +414,8 @@ process(clk, rst, inst_flag, instruc, currstate)                    -- process o
 			memwrite <= '0';
 			memread <= '0';
 			rfwrite <= '1';
-			rAdd3 <= instr(11 downto 9);
 			rData3 <= x1; 
+			rAdd3 <= instr(11 downto 9);
 			nxtstate := Sx;
 		
 		when others => null;

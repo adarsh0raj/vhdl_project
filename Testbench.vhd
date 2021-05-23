@@ -12,19 +12,17 @@ architecture arc of Testbench is
 	component IITB_Proc is
 	port (
     clk,rst, inst_flag : in std_logic;
-    instruc : in std_logic_vector(15 downto 0);
-	 output : out std_logic_vector(3 downto 0));
+    instruc : in std_logic_vector(15 downto 0));
 	end component;
 	
 	signal clock, reset : std_logic;
-	signal output : std_logic_vector(3 downto 0);
 	signal instr : std_logic;
 	signal instruction : std_logic_vector(15 downto 0);
 
 begin
 
 	dut_instance : IITB_Proc
-		port map(clk => clock, rst => reset, inst_flag => instr, instruc => instruction, output => output);
+		port map(clk => clock, rst => reset, inst_flag => instr, instruc => instruction);
 		
 	process
 	begin
@@ -42,15 +40,11 @@ begin
 			clock <= '1';
 			instr <= '1';
 			
-			--instruction <= instruction ka code add karo
+			--instruction <= instruction code
 			if(i=1) then
 				instruction <= "0000000000000001";
-			else 
-				if(i=3) then
-					instruction <= "0100000000000001";
-				else
-					instruction <= "0000000000000000";
-				end if;
+			else
+				instruction <= "0000000000000000";
 			end if;
 			
 			wait for 10 ns;
