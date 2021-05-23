@@ -339,7 +339,7 @@ process(clk, rst, inst_flag, instruc, currstate)                    -- process o
 		when S13 =>
 			a_alu <= x1;
 			b_alu <= "0000000000000001";
-			alutype <= '1';
+			alutype <= '0';
 			x1 := res_alu;
 			if(unsigned(x2)<8) then
 				if(opr = "0111") then
