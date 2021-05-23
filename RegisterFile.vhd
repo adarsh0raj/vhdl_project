@@ -35,7 +35,8 @@ begin
 	if((falling_edge(clock))) then
 	
 		if (rst = '1') then                      -- reset -> all value set to zero
-			for i in 0 to 7 loop
+			registers(0) <= "0000000000000001";
+			for i in 1 to 7 loop
 				registers(i) <= "0000000000000000";
 			end loop;
 			
